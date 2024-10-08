@@ -51,7 +51,7 @@ export async function POST(request: Request) {
   const supabase = createRouteHandlerClient({ cookies });
 
   try {
-    const { data, error } = await supabase.from("transactions").insert([
+    const { error } = await supabase.from("transactions").insert([
       {
         user_id: userId,
         amount: parseFloat(amount),

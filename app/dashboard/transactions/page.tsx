@@ -23,7 +23,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
