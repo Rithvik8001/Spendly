@@ -134,12 +134,12 @@ export default function Home() {
               {
                 name: "John Doe",
                 role: "Freelancer",
-                text: "Spendly has revolutionized how I manage my finances! It's intuitive and powerful.",
+                text: "Spendly has revolutionized how I manage my finances! It&apos;s intuitive and powerful.",
               },
               {
                 name: "Jane Smith",
                 role: "Small Business Owner",
-                text: "I love how easy it is to track expenses with Spendly. It's a game-changer for my business.",
+                text: "I love how easy it is to track expenses with Spendly. It&apos;s a game-changer for my business.",
               },
             ].map((testimonial, index) => (
               <motion.div
@@ -158,7 +158,7 @@ export default function Home() {
                       <Star className="text-yellow-400" />
                     </div>
                     <p className="text-gray-600 mb-4 italic">
-                      "{testimonial.text}"
+                      &quot;{testimonial.text}&quot;
                     </p>
                     <div>
                       <p className="font-semibold">{testimonial.name}</p>
