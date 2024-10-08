@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
 import {
@@ -59,77 +59,84 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      if (!isLoaded || !isSignedIn) return;
+  const fetchTransactions = useCallback(async () => {
+    if (!isLoaded || !isSignedIn) return;
 
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
 
-      const startOfMonth = new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth(),
-        1
+    const startOfMonth = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      1
+    );
+    const endOfMonth = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth() + 1,
+      0
+    );
+
+    try {
+      const response = await fetch(
+        `/api/transactions?startDate=${startOfMonth.toISOString()}&endDate=${endOfMonth.toISOString()}&userId=${
+          user.id
+        }`
       );
-      const endOfMonth = new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth() + 1,
-        0
-      );
 
-      try {
-        const response = await fetch(
-          `/api/transactions?startDate=${startOfMonth.toISOString()}&endDate=${endOfMonth.toISOString()}&userId=${
-            user.id
-          }`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch transactions");
-        }
-
-        const data = await response.json();
-        setTransactions(data);
-      } catch (error) {
-        console.error("Error fetching transactions:", error);
-        setError("Failed to fetch transactions. Please try again later.");
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error("Failed to fetch transactions");
       }
-    };
 
-    fetchTransactions();
+      const data = await response.json();
+      setTransactions(data);
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      setError("Failed to fetch transactions. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   }, [selectedDate, isLoaded, isSignedIn, user]);
 
-  const totalIncome = transactions
-    .filter((t) => t.type === "income")
-    .reduce((sum, t) => sum + t.amount, 0);
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
 
-  const totalExpenses = transactions
-    .filter((t) => t.type === "expense")
-    .reduce((sum, t) => sum + t.amount, 0);
+  const { totalIncome, totalExpenses, incomeVsExpensesData, pieChartData } =
+    useMemo(() => {
+      const totalIncome = transactions
+        .filter((t) => t.type === "income")
+        .reduce((sum, t) => sum + t.amount, 0);
 
-  const incomeVsExpensesData = [
-    {
-      name: selectedDate.toLocaleString("default", { month: "short" }),
-      Income: totalIncome,
-      Expenses: totalExpenses,
-    },
-  ];
+      const totalExpenses = transactions
+        .filter((t) => t.type === "expense")
+        .reduce((sum, t) => sum + t.amount, 0);
 
-  const categoryData = transactions
-    .filter((t) => t.type === "expense")
-    .reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + t.amount;
-      return acc;
-    }, {} as Record<string, number>);
+      const incomeVsExpensesData = [
+        {
+          name: selectedDate.toLocaleString("default", { month: "short" }),
+          Income: totalIncome,
+          Expenses: totalExpenses,
+        },
+      ];
 
-  const pieChartData = Object.entries(categoryData).map(([name, value]) => ({
-    name,
-    value,
-  }));
+      const categoryData = transactions
+        .filter((t) => t.type === "expense")
+        .reduce((acc, t) => {
+          acc[t.category] = (acc[t.category] || 0) + t.amount;
+          return acc;
+        }, {} as Record<string, number>);
 
-  const MotionCard = motion(Card);
+      const pieChartData = Object.entries(categoryData).map(
+        ([name, value]) => ({
+          name,
+          value,
+        })
+      );
+
+      return { totalIncome, totalExpenses, incomeVsExpensesData, pieChartData };
+    }, [transactions, selectedDate]);
+
+  const MotionCard = useMemo(() => motion(Card), []);
 
   if (!isLoaded || !isSignedIn) {
     return <div>Loading...</div>;

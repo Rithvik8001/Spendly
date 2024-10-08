@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
@@ -55,7 +55,7 @@ export default function TransactionsPage() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
-  const handleAddTransaction = async () => {
+  const handleAddTransaction = useCallback(async () => {
     if (!isLoaded || !isSignedIn) {
       setError("You must be logged in to add a transaction.");
       return;
@@ -102,6 +102,8 @@ export default function TransactionsPage() {
         throw new Error("Failed to add transaction");
       }
 
+      const newTransaction = await response.json();
+
       setSuccess(true);
       toast({
         title: "Success",
@@ -119,9 +121,19 @@ export default function TransactionsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [
+    amount,
+    category,
+    description,
+    isLoaded,
+    isSignedIn,
+    router,
+    toast,
+    type,
+    user,
+  ]);
 
-  const MotionCard = motion(Card);
+  const MotionCard = useMemo(() => motion(Card), []);
 
   if (!isLoaded || !isSignedIn) {
     return <div>Loading...</div>;

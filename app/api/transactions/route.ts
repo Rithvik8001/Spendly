@@ -23,7 +23,8 @@ export async function GET(request: Request) {
       .select("*")
       .eq("user_id", userId)
       .gte("date", startDate)
-      .lte("date", endDate);
+      .lte("date", endDate)
+      .order("date", { ascending: false });
 
     if (error) throw error;
 
@@ -51,23 +52,23 @@ export async function POST(request: Request) {
   const supabase = createRouteHandlerClient({ cookies });
 
   try {
-    const { error } = await supabase.from("transactions").insert([
-      {
-        user_id: userId,
-        amount: parseFloat(amount),
-        description,
-        type,
-        category,
-        date: new Date().toISOString(),
-      },
-    ]);
+    const { data, error } = await supabase
+      .from("transactions")
+      .insert([
+        {
+          user_id: userId,
+          amount: parseFloat(amount),
+          description,
+          type,
+          category,
+          date: new Date().toISOString(),
+        },
+      ])
+      .select();
 
     if (error) throw error;
 
-    return NextResponse.json(
-      { message: "Transaction added successfully" },
-      { status: 201 }
-    );
+    return NextResponse.json(data[0], { status: 201 });
   } catch (error) {
     console.error("Error adding transaction:", error);
     return NextResponse.json(
