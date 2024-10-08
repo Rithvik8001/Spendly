@@ -1,100 +1,181 @@
-import Image from "next/image";
+"use client";
+
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { PiggyBank, BarChart2, Target, Star } from "lucide-react";
+
+const HighlightedText = ({ text }: { text: string }) => (
+  <div className="relative inline-block">
+    <svg
+      className="absolute top-0 left-0 w-full h-full"
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+    >
+      <path
+        d="M0,50 Q25,45 50,50 T100,50"
+        fill="none"
+        stroke="hsl(var(--primary) / 0.3)"
+        strokeWidth="85"
+        strokeLinecap="round"
+      />
+    </svg>
+    <span className="relative z-10 text-7xl font-extrabold text-primary">
+      {text}
+    </span>
+  </div>
+);
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-white shadow-sm">
+        <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <Link href="/" className="text-2xl font-bold text-primary">
+            <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600">
+              SPENDLY
+            </span>
+          </Link>
+          <div>
+            <Link href="/login">
+              <Button variant="ghost" className="mr-2">
+                Login
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button>Sign Up</Button>
+            </Link>
+          </div>
+        </nav>
+      </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+      <main className="flex-grow container mx-auto px-4 py-12">
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-24"
+        >
+          <div className="mb-8">
+            <HighlightedText text="Spendly" />
+          </div>
+          <p className="text-2xl text-gray-600 mb-4">
+            Wisely. Easily. Intelligently.
+          </p>
+          <p className="text-xl text-gray-500 mb-8">
+            Your personal finance companion for smart spending and saving.
+          </p>
+          <Link href="/signup">
+            <Button size="lg" className="text-lg px-8 py-6">
+              Get Started
+            </Button>
+          </Link>
+        </motion.section>
+
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mb-24"
+        >
+          <h2 className="text-3xl font-semibold mb-12 text-center">Features</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: PiggyBank,
+                title: "Easy Expense Tracking",
+                description: "Effortlessly log and categorize your expenses.",
+              },
+              {
+                icon: BarChart2,
+                title: "Insightful Analytics",
+                description:
+                  "Visualize your spending patterns with intuitive charts.",
+              },
+              {
+                icon: Target,
+                title: "Budget Planning",
+                description:
+                  "Set and monitor financial goals with smart budgeting tools.",
+              },
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 * index }}
+              >
+                <Card className="h-full">
+                  <CardContent className="flex flex-col items-center text-center p-6">
+                    <feature.icon size={48} className="text-primary mb-4" />
+                    <h3 className="text-xl font-semibold mb-2">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-600">{feature.description}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="mb-24"
+        >
+          <h2 className="text-3xl font-semibold mb-12 text-center">
+            What Our Users Say
+          </h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            {[
+              {
+                name: "John Doe",
+                role: "Freelancer",
+                text: "Spendly has revolutionized how I manage my finances! It's intuitive and powerful.",
+              },
+              {
+                name: "Jane Smith",
+                role: "Small Business Owner",
+                text: "I love how easy it is to track expenses with Spendly. It's a game-changer for my business.",
+              },
+            ].map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 * index }}
+              >
+                <Card className="h-full">
+                  <CardContent className="p-6">
+                    <div className="flex items-center mb-4">
+                      <Star className="text-yellow-400 mr-1" />
+                      <Star className="text-yellow-400 mr-1" />
+                      <Star className="text-yellow-400 mr-1" />
+                      <Star className="text-yellow-400 mr-1" />
+                      <Star className="text-yellow-400" />
+                    </div>
+                    <p className="text-gray-600 mb-4 italic">
+                      "{testimonial.text}"
+                    </p>
+                    <div>
+                      <p className="font-semibold">{testimonial.name}</p>
+                      <p className="text-sm text-gray-500">
+                        {testimonial.role}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      <footer className="bg-gray-100 py-8 text-center">
+        <p className="text-gray-600">Made with ❤️ by Rithvik</p>
       </footer>
     </div>
   );
