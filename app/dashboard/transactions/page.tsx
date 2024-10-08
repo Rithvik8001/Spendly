@@ -102,7 +102,7 @@ export default function TransactionsPage() {
         throw new Error("Failed to add transaction");
       }
 
-      const newTransaction = await response.json();
+      // const newTransaction = await response.json();
 
       setSuccess(true);
       toast({
